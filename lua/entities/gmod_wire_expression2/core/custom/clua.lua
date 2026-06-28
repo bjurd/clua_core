@@ -1,5 +1,7 @@
 E2Lib.RegisterExtension("clua_core", true, "Allows E2 chips to run clientside Lua code")
 
+local wire_clua_allow_returns = CreateConVar("wire_clua_allow_returns", 1, { FCVAR_ARCHIVE, FCVAR_NOTIFY }, "Allow CLua Core to return data to the Expression2 chip", 0, 1)
+
 util.AddNetworkString("SendLongLua")
 
 local function ChipOwnedByPlayer(Chip, Player)
@@ -19,6 +21,9 @@ net.Receive("SendLongLua", function(_, Sender)
 	local Chip = Entity(ChipIndex)
 
 	if not ChipOwnedByPlayer(Chip, Sender) then
+		return
+	end
+	if not wire_clua_allow_returns:GetBool() then
 		return
 	end
 
